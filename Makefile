@@ -32,7 +32,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/swish-e
   SECTION:=utils
   CATEGORY:=Utilities
-  DEPENDS:=+zlib +libxml2  +xpdf +catdoc  +luci-app-freifunk-widgets +iwinfo +vdftpd-tls +luci-app-olsr-services +luci-app-samba +luci-theme-openwrt +e2fsprogs +dosfsck +block-mount +busybox +opkg +base-files +uci +wireless-tools +fstools +mtd +dnsmasq +iw +ip 
+  DEPENDS:=+zlib +libxml2  +xpdf +catdoc  +luci-app-freifunk-widgets +iwinfo +vdftpd-tls +luci-app-samba +luci-theme-openwrt +e2fsprogs +dosfsck +block-mount +busybox +opkg +base-files +uci +wireless-tools +fstools +mtd +dnsmasq +iw +ip +kmod-usb-storage +kmod-usb2 +olsrd-mod-nameservice +olsrd-mod-jsoninfo
   TITLE:=Simple Web Indexing System for Humans - Enhanced
   URL:=http://swish-e.org
 endef

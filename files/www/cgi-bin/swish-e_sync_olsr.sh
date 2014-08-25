@@ -17,7 +17,7 @@ services_file="/var/run/services_olsr"
 
 if [ -f $services_file ]; 
 then
-	Liste=`cat /var/run/services_olsr | grep swish | grep -v own | cut -d# -f2`
+	Liste=`cat /var/run/services_olsr | grep -i swish | grep -i -v own | cut -d# -f2`
 else
 	echo "service_file in olsr_nameservice-plugin noch nicht konfiguriert!"
 	echo "als service_file wird erwartet: $service_file"
@@ -43,21 +43,28 @@ fi
 
 echo  "beginne Synchronisiere..."
 
+mergen=0
+
 for i in $Liste;
 do
 	echo "Verarbeitet wird:"
 	echo $i
         if [ -e $indexdir/global/$i ]; then
+		echo "Verzeichnis existiert."
+	else
+		echo "Verzeichnis existiert nicht, wird erstellt..."
                 mkdir $indexdir/global/$i
 	fi
 	echo "Download von md5-file..."
         wget http://$i/swish-e/indexfiles/local/index.swish-e.md5sums -O $indexdir/$i/index.swish-e.md5sum
-        if [ ! md5sum -c --status $indexdir/$i/index.swish-e.md5 ]; then
+        if [ ! `md5sum -c  $indexdir/$i/index.swish-e.md5` ]; then
+		mergen=1
+		echo "F&uuml;r Verzeichniss: "$indexdir/global/$i                                                                       
 		echo "Prüfsumme nicht OK, erneuere die Dateien..."
 		echo "index.swish-e..."
-		wget http://$i/swish-e/indexfiles/local/index.swish-e -O $indexdir/$i/index.swish-e
+		echo `wget http://$i/swish-e/indexfiles/local/index.swish-e -O $indexdir/global/$i/index.swish-e 2>&1`
 		echo "index.swish-e.prop..."
-		wget http://$i/swish-e/indexfiles/local/index.swish-e.prop -O $indexdir/$i/index.swish-e.prop
+		echo `wget http://$i/swish-e/indexfiles/local/index.swish-e.prop -O $indexdir/global/$i/index.swish-e.prop 2>&1`
 	fi
 done
 echo "...ende synchronisieren."
@@ -70,13 +77,21 @@ do
 	Listemerge=$Listemerge" $indexdir/global/$i/index.swish-e"
 done
 
-echo "Listemerge = "$Listemerge
 
 Listemerge=$Listemerge" $indexdir/local/index.swish-e "
 
+echo "Listemerge = "$Listemerge
+
+
 echo "beginne mergen..."
-echo `swish-e -e -M $Listelang $indexdir/merge/index.swish-e`
-echo "...ende mergen."
+if [ mergen ]; then                                                                
+	        echo "beginne mergen..."                                                                                                       
+	        rm $indexdir/merge/* 
+		echo `swish-e -e -M $Listemerge $indexdir/merge/index.swish-e`
+		echo "...ende mergen."
+else                                                                               
+	        echo "Nix gemacht!"                                                        
+fi       
 echo "...Ende Prozedur Mergen."
 
 echo "</pre>"

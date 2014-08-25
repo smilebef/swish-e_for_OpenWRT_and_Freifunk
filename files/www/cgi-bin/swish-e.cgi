@@ -134,7 +134,7 @@ echo '
     #ausgabe=`swish-e  -f swish-e/indexfiles/merge/index.swish-e -x '\<br\>%c. Rang: \<em\>%r\</em\> -\> \<a href="%p"\>%t\</a\>   Groesse: %l \<br\>\n' -w "'"$query"'" | sed 's;/./;/;g' | sed 's;/www;;1' | sed 's;#;"<br># ;1'`
     #echo $ausgabe
 #    done
-echo `swish-e  -f swish-e/indexfiles/merge/index.swish-e -x '\<br\>%c. Rang: \<em\>%r\</em\> -\> \<a href="%p"\>%t\</a\>   Groesse: %l \<br\>\n' -w "'"$query"'" | sed 's;/./;/;g' | sed 's;/www;;1' | sed 's;#;"<br># ;1'`
+echo `swish-e  -f swish-e/indexfiles/merge/index.swish-e -x '\<br\>%c. Rang: \<em\>%r\</em\> -\> \<a href="http://%p"\>%t\</a\>   Groesse: %l \<br\>\n' -w "'"$query"'" | sed 's;/./;/;g'  | sed 's;#;"<br># ;1'`
 echo '
 </pre></p>
 <hr>
