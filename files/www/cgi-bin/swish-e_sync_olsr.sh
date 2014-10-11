@@ -11,8 +11,18 @@ echo '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 </head>'
 echo "<html><body>"
 echo "<pre>"
+
+lockfile="/var/tmp/swish-sync.lock"
+
+if [ -f $lockfile ]; then
+	echo "Already running. Exiting."
+	exit 1
+else
+	touch $lockfile
+fi
+
 echo "Beginn Prozedur Synchronisieren..."
-indexdir="/www/swish-e/indexfiles"
+indexdir="/www/data/indexfiles"
 services_file="/var/run/services_olsr"
 
 if [ -f $services_file ]; 
@@ -56,7 +66,7 @@ do
                 mkdir $indexdir/global/$i
 	fi
 	echo "Download von md5-file..."
-        wget http://$i/swish-e/indexfiles/local/index.swish-e.md5sums -O $indexdir/$i/index.swish-e.md5sum
+        wget http://$i/data/indexfiles/local/index.swish-e.md5sums -O $indexdir/$i/index.swish-e.md5sum
         if [ ! `md5sum -c  $indexdir/$i/index.swish-e.md5` ]; then
 		mergen=1
 		echo "F&uuml;r Verzeichniss: "$indexdir/global/$i                                                                       
@@ -93,6 +103,8 @@ else
 	        echo "Nix gemacht!"                                                        
 fi       
 echo "...Ende Prozedur Mergen."
+
+rm $lockfile
 
 echo "</pre>"
 echo "</body></html>"

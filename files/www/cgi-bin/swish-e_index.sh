@@ -12,17 +12,26 @@ echo "<html><body>"
 echo
 echo "<hr>"
 echo "<pre>"
+echo
+lockfile="/var/tmp/swish-index.lock"
 
-
+if [ -f $lockfile ]; then
+	echo "Already running. Exiting."
+	exit 1
+else
+	touch $lockfile
+fi
+		      
 
 cat /etc/swish-e/swish.conf | sed s/Kotzbrocken/`uci get network.unicast.ipaddr`/ > /var/etc/swish-e.conf
 
 
 
-indexdir="/www/swish-e/indexfiles"
+indexdir="/www/data/indexfiles"
 logfile="/www/swish-e/swish-e.log"
 
 echo "Beginne mit dem Indizierprozess" > $logfile
+
 
 Liste=`cd $indexdir/global/ && ls` 2>&1 >> $logfile
 
@@ -33,36 +42,66 @@ do
 done
 
 echo "Listemerge = "$Listemerge 2>&1 >> $logfile
-
 Listemerge=$Listemerge" $indexdir/local/index.swish-e "
 
-echo `rm $indexdir/merge/index.swish-e  2>&1 >> $logfile`
-echo `rm $indexdir/merge/index.swish-e.prop  2>&1 >> $logfile`
+if [ ! -d $indexdir ]; then
+	mkdir $indexdir;
+fi
+if [ ! -d $indexdir/local ]; then
+	mkdir $indexdir/local;
+fi
+if [ ! -d $indexdir/global ]; then
+	mkdir $indexdir/global
+fi
+if [ ! -d $indexdir/merge ]; then
+	mkdir $indexdir/merge
+fi
 
 
-#echo '<a href="/">Zur&uuml;ck</a> <br />'
-echo "Beginne mit Indizieren, erstelle Prüfsummen und merge externe indexfiles zusammen. <br />"
-echo 'Der Stand der Indizierung kann/muss unter <a href="/swish-e/swish-e.log">Logdatei</a> eingesehen werden. <br />'
-echo 'Die abschliessende Meldung muss lauten "indizieren erfolgreich abgeschlossen"... <br />'
-echo `swish-e -e -c /var/etc/swish-e.conf -f /www/swish-e/indexfiles/local/index.swish-e -i /www/*  2>&1 >> $logfile && md5sum /www/swish-e/indexfiles/local/index.swish-e > /www/swish-e/indexfiles/local/index.swish-e.md5sums && md5sum /www/swish-e/indexfiles/local/index.swish-e.prop >> /www/swish-e/indexfiles/local/index.swish-e.md5sums && swish-e -e -M $Listemerge $indexdir/merge/index.swish-e 2>&1 >> $logfile && echo "indizieren erfolgreich abgeschlossen" >> $logfile &`
-echo "... Indizieren abgeschlossen ."
-#echo "Erzeuge Md5sum ..."
-#echo `md5sum /www/swish-e/indexfiles/local/index.swish-e > /www/swish-e/indexfiles/local/index.swish-e.md5sums`
-#echo `md5sum /www/swish-e/indexfiles/local/index.swish-e.prop >> /www/swish-e/indexfiles/local/index.swish-e.md5sums`
-echo "</pre>"
-#echo "<br>... Md5sum erneuert.<br>"
-echo "<hr>"
+echo `rm $indexdir/local/index.swish-e.neu  2>&1 >> $logfile`
+echo `rm $indexdir/local/index.swish-e.neu.prop  2>&1 >> $logfile`
 
-#echo "<hr>"
-#echo "<pre>"
-#echo "Mergen der Indexdateien ..."
+echo `rm $indexdir/local/index.swish-e.neuer  2>&1 >> $logfile`
+echo `rm $indexdir/local/index.swish-e.neuer.prop  2>&1 >> $logfile`
+
+echo `rm $indexdir/merge/index.swish-e.neu  2>&1 >> $logfile`
+echo `rm $indexdir/merge/index.swish-e.neu.prop  2>&1 >> $logfile`
 
 
-#echo `swish-e -e -M $Listemerge $indexdir/merge/index.swish-e 2>&1 >> /www/swish-e/swish-e.log`
-#echo "... Indexfiles zusammengef&uuml;gt."
-#echo "</pre>"
-#echo "<hr>"
-echo "<br>"
+echo 'Ber&uuml;hre Timestamp.'
+touch $indexdir/local/timestamp 2>&1 >> $logfile
 
-echo "</html></body>"
+echo 'Pr&uuml;fe ob schon eine Indexdatei existiert.'
+if [ -e $indexdir/local/index.swish-e ]; then 
+
+echo 'Ja, sie existert. <br />
+Also indiziere inkrementell. <br />
+Beginne mit Indizieren, erstelle Pr&uuml;fsummen und merge externe indexfiles zusammen. <br />
+Der Stand der Indizierung kann/muss unter <a href="/swish-e/swish-e.log">Logdatei</a> eingesehen werden. <br />
+Die abschliessende Meldung muss lauten "indizieren erfolgreich abgeschlossen"... <br />'
+
+echo `swish-e -e -c /var/etc/swish-e.conf -N $indexdir/local/timestamp -f $indexdir/local/index.swish-e.neu -i /www/*  2>&1 >> $logfile  &&   swish-e -e -M "$indexdir/local/index.swish-e $indexdir/local/index.swish-e.neu" $indexdir/local/index.swish-e.neuer 2>&1 >> $logfile && mv $indexdir/local/index.swish-e.neuer $indexdir/local/index.swish-e 2>&1 >> $logfile && mv $indexdir/local/index.swish-e.neuer.prop $indexdir/local/index.swish-e.prop 2>&1 >> $logfile  &&  md5sum $indexdir/local/index.swish-e > $indexdir/local/index.swish-e.md5sums && md5sum $indexdir/local/index.swish-e.prop >> $indexdir/local/index.swish-e.md5sums && swish-e -e -M $Listemerge $indexdir/merge/index.swish-e.neu 2>&1 >> $logfile && mv $indexdir/merge/index.swish-e.neu $indexdir/merge/index.swish-e 2>&1 >> $logfile && mv $indexdir/merge/index.swish-e.neu.prop $indexdir/merge/index.swish-e.prop 2>&1 >> $logfile && echo "indizieren erfolgreich abgeschlossen" >> $logfile &`
+
+echo '... Indizieren abgeschlossen .'
+else
+
+echo 'Nein, sie existert nicht.  <br />
+Also indiziere neu. <br /> 
+Beginne mit Indizieren, erstelle Prüfsummen und merge externe indexfiles zusammen. <br />
+Der Stand der Indizierung kann/muss unter <a href="/swish-e/swish-e.log">Logdatei</a> eingesehen werden. <br />
+Die abschliessende Meldung muss lauten "indizieren erfolgreich abgeschlossen"... <br />'
+
+echo `swish-e -e -c /var/etc/swish-e.conf -f $indexdir/local/index.swish-e.neu -i /www/*  2>&1 >> $logfile  && mv  $indexdir/local/index.swish-e.neu  $indexdir/local/index.swish-e && mv  $indexdir/local/index.swish-e.neu.prop  $indexdir/local/index.swish-e.prop && md5sum $indexdir/local/index.swish-e > $indexdir/local/index.swish-e.md5sums && md5sum $indexdir/local/index.swish-e.prop >> $indexdir/local/index.swish-e.md5sums  && swish-e -e -M $Listemerge $indexdir/merge/index.swish-e.neu 2>&1 >> $logfile && mv $indexdir/merge/index.swish-e.neu $indexdir/merge/index.swish-e 2>&1 >> $logfile && mv $indexdir/merge/index.swish-e.neu.prop $indexdir/merge/index.swish-e.prop 2>&1 >> $logfile  && echo "indizieren erfolgreich abgeschlossen" >> $logfile &`
+
+echo '... Indizieren abgeschlossen .'
+fi
+
+
+
+rm $lockfile
+
+echo '</pre>
+<hr>
+<br>
+</html></body>'
 

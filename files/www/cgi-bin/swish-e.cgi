@@ -68,10 +68,11 @@ echo '
                     enctype="application/x-www-form-urlencoded" 
                     class="srchform"> 
 
-                    <label for="searchfield">swish-e search local for</label>
+                    <label for="searchfield">local swish-e search tool:</label>
                     <input maxlength="200" placeholder="Suchbegriff"  value="'
-query=`echo $QUERY_STRING | tr "&" "\n" | grep "query=" | sed "s/query=//" |sed "s/*/?/g" | sed "s/;/?/g" | sed "s/[|]/?/g" | sed "s/[\]/?/g" | sed "s/'//g" | sed "s/%21/!/g" | sed 's/%22/"/g' | sed "s/%23/#/g" | sed "s/%24/?/g"  | sed "s/%26/?/g" | sed "s/%27/'/g"  | sed 's/%28/(/g' | sed "s/%29/)/g" | sed "s/%2A/*/g" | sed "s/%2B/+/g" | sed "s/%2C/,/g" | sed "s/%2D/-/g" | sed "s/%2E/./g" | sed 's;%2F;/;g' | sed 's/%3A/:/g' | sed 's/%3B/;/g' | sed 's/%3C/</g' | sed 's/%3D/=/g'| sed 's/%3E/>/g' | sed 's/%3F/?/g'| sed 's/%5B/[/g' | sed 's/%5C/?/g' | sed 's/%5D/]/g'| sed 's/%5E/^/g' | sed 's/%5F/_/g' | sed 's/%7B/{/g' | sed 's/%7C/?/g'| sed 's/%7D/}/g'| sed 's/%7E/~/g' | sed 's/%60/?/g' | sed 's/%25/%/g'`
-htmlquery=`echo $query | sed 's/"/\&quot;/g'` 
+query=`echo $QUERY_STRING | tr "&" "\n" | grep "query=" | sed "s/query=//" | sed 's/*/?/g' | sed "s/;/?/g" | sed "s/[|]/?/g" | sed "s/[\]/?/g" | sed "s/'//g" | sed "s/%21/!/g" | sed 's/%22/"/g' | sed "s/%23/#/g" | sed "s/%24/?/g"  | sed "s/%26/?/g" | sed "s/%27/'/g"  | sed 's/%28/(/g' | sed "s/%29/)/g" | sed "s/%2A/*/g" | sed "s/%2B/+/g" | sed "s/%2C/,/g" | sed "s/%2D/-/g" | sed "s/%2E/./g" | sed 's;%2F;/;g' | sed 's/%3A/:/g' | sed 's/%3B/;/g' | sed 's/%3C/</g' | sed 's/%3D/=/g'| sed 's/%3E/>/g' | sed 's/%3F/?/g'| sed 's/%5B/[/g' | sed 's/%5C/?/g' | sed 's/%5D/]/g'| sed 's/%5E/^/g' | sed 's/%5F/_/g' | sed 's/%7B/{/g' | sed 's/%7C/?/g'| sed 's/%7D/}/g'| sed 's/%7E/~/g' | sed 's/%60/?/g' | sed 's/%25/%/g' | sed 's/\&quot;/"/g' | sed 's/+/ /g' `
+
+htmlquery=`echo $query | sed 's/"/\&quot;/g'  ` 
 echo $htmlquery
 echo '"
                     id="searchfield"  size="30" name="query"  type="text" alt="Search input field" />
@@ -106,38 +107,105 @@ echo '"
 </div>
 <!-- index -->
 '
-#query=`echo $QUERY_STRING | tr "&" "\n" | grep "query=" | sed "s/query=//" |sed "s/*/?/g" | sed "s/;/?/g" | sed "s/[|]/?/g" | sed "s/[\]/?/g" | sed "s/'//g" | sed "s/%21/!/g" | sed 's/%22/"/g' | sed "s/%23/#/g" | sed "s/%24/?/g"  | sed "s/%26/?/g" | sed "s/%27/'/g"  | sed 's/%28/(/g' | sed "s/%29/)/g" | sed "s/%2A/*/g" | sed "s/%2B/+/g" | sed "s/%2C/,/g" | sed "s/%2D/-/g" | sed "s/%2E/./g" | sed 's;%2F;/;g' | sed 's/%3A/:/g' | sed 's/%3B/;/g' | sed 's/%3C/</g' | sed 's/%3D/=/g'| sed 's/%3E/>/g' | sed 's/%3F/?/g'| sed 's/%5B/[/g' | sed 's/%5C/?/g' | sed 's/%5D/]/g'| sed 's/%5E/^/g' | sed 's/%5F/_/g' | sed 's/%7B/{/g' | sed 's/%7C/?/g'| sed 's/%7D/}/g'| sed 's/%7E/~/g' | sed 's/%60/?/g' | sed 's/%25/%/g'`
-#htmlquery=`echo $query | sed 's/"/\&quot;/g'`
 
-#echo "Query" $query
-#echo "HTMLQuery" $htmlquery
 
+
+
+#query='swish "path or ref to a doc content"'
+
+
+nix=hslfdsuiroewt
+phrase=$nix
+phrase=`echo ' '$query' ' | sed   's/^[^"]*"//1' | sed 's/"[^$]*$//1' `
+netto=`echo $query | sed 's/"[^"]*"//g' | sed 's/ or / /g' | sed 's/ and / /g' | sed 's/ not / /g' `
+brutto=`echo $netto ; echo $phrase ` 
+bruttodick=`echo $brutto | sed 's/ [a-zA-Z] / /g' | sed 's/ href / /g' | sed 's/ hr / /g' | sed 's/ ef / /g' | sed 's/^[a-zA-Z] / /g' | sed 's/^href / /g' | sed 's/^hr / /g' | sed 's/^ef / /g' | sed 's/ [a-zA-Z]$/ /g' | sed 's/ href$/ /g' | sed 's/ hr$/ /g' | sed 's/ ef$/ /g'`
+
+
+#j=0
+
+#for i in $brutto; do
+#        export dick$j=`echo  $i | sed 's/^[a-zA-Z]$/'$nix'/g' | sed 's/^href$/'$nix'/g' | sed 's/^hr$/'$nix'/g' | sed 's/^ef$/'$nix'/g'  ` 
+#	k=$j
+#	max=$max" "$j
+#        j=` dc $j 1 add p`
+#done  
+
+
+
+#echo "Query "$query'<br>'
+oldquery=$query
+#j=0
+#echo "Phrase "$phrase
+#for i in $phrase; do
+#	export query$j=$i
+#	j=` dc $j 1 add p`
+#done
+
+# zum Debuggen
+
+echo '<br>'
+#echo 'oqu '$oldquery'<br>'
+#echo 'qu '$query'<br>'
+#echo 'ph '$phrase'<br>'
+#echo 'ne '$netto'<br>'
+#echo 'br '$brutto'<br>'
+#echo 'brd '$bruttodick'<br>'
+#echo '<hr>'
+
+oldquery="'"$oldquery"'"
+#echo 'oqu '$oldquery'<br>'
+#echo '<hr>'
+#
+# Swish Ausgabe mit swish -f index -x 'Zeichenkette' -w ''Wort''
+raw=`        swish-e -f data/indexfiles/merge/index.swish-e -x 'path:=:%p:=:pathtitle:=:%t:=:titledesc:=:%d:=:desc' -w $oldquery   | sed 's/\&/\&amp;/g' | sed  's/</\&lt;/g' | sed 's/\&/\&amp;/g' | sed  's/</\&lt;/g' | sed  's/>/\&gt;/g' | sed  's/path:=:/<hr>\r\npath:=:/g' | sed  's/desc:=:/\r\n<! desc:=:1>/g' `
+#raw=`        swish-e -f swish-e/indexfiles/merge/index.swish-e -x '{"path","%p","title","%t","desc","%d"}' -w "'$oldquery'" 
+#echo $raw
+
+#   | sed 's/\&/\&amp;/g' | sed  's/</\&lt;/g' | sed  's/>/\&gt;/g' | sed  's/path:=:/<hr>\r\npath:=:/g' | sed  's/desc:=:/\r\n<! desc:=:1>/g' `
+#
+# wird gefiltert nach HTML-Zeichen &,<,>
+# vor path:=: und desc:=: wird umgebrochen,
+# aus desc:=: wird <! desc:=:1>
+#
+# Der Hyperlink wird eingefügt
+veryrare=`   echo ''$raw''             |   sed  's/path:=:/<a href="http:\/\//g' | sed  's/:=:pathtitle:=:/">/g'  | sed   's/:=:title/<\/a>/g'  | sed  's/# SWISH format/<!--/g'  | sed 's/seconds <hr>/-->/g' `
+#
+# Ein <div style> wird eingefuegt und umgebrochen,
+rare=`       echo ''$veryrare''        |   sed   '/<! desc:=:1>/ s/\(<! desc:=:1>\)/<div style="font-size:70%; font-family:Verdana">\r\n\1/g' | sed  's/:=:desc/\r\n\r\n<! :=:desc><\/div>\r\n/g'`
+# :=:desc wird zu <! :=:desc>
+#
+# Deaktiviert, sed kann vermutlich nicht so viele Zeichen pro Zeile. So geht es auch.
+#mediumrare=` echo ''$rare''            |   sed    '/<! desc:=:1>/ s/\(<! desc:=:1>.\{100,'$zahl'\}\) \([^\$]*\)/ \1 <br>\r\n<! desc:=:2>\2/g' ` 
+#medium=`     echo ''$mediumrare''      |   sed    '/<! desc:=:2>/ s/\(<! desc:=:2>.\{'$zahl'\}\)\([^\$]*\)/ \1 <br>\r\n<! desc:=:3>\2/g' `
+#mediumwell=` echo ''$medium''          |   sed    '/<! desc:=:3>/ s/\(<! desc:=:3>.\{'$zahl'\}\)/ \1 <br>\r\n<br>\r\n<!--  -->/g' `
+#well=`       echo ''$mediumwell'' ` #     |   sed   's/\(^<! desc:=:4>[^$]*$\)//g' `
+# gesonderte Darstellung von Phrasen wurde entfernt.
+#
+# Worte Fett zeichnen.
+IFS=$'
 '
-<table border="0" ><tr><th width="100%" align="left">Locale Suche nach:</th><th><a  href="/">Luci</a></th></tr></table>
-<em> '$query'
-</em>
-<!hr>'
-
-
-#echo $htmlquery
-echo '
-
-<!hr>
-<p><pre>
+for line in $rare
+	do
+	IFS=$' '
+	for k in $bruttodick
+		do
+		line=`echo $line | sed   '/desc:=:/ s/'$k'/<b>'$k'<\/b>/g'`
+		done
+	echo $line
+	#ausgabe=`echo $line  |   sed   "/desc:=:/ s/$dick0/<b>$dick0<\/b>/g" | sed '/desc:=:/ s/'$dick1'/<b>'$dick1'<\/b>/g' | sed '/desc:=:/ s/'$dick2'/<b>'$dick2'<\/b>/g' `
+	#echo $ausgabe
+	IFS=$'
 '
-#for i in swish-e/indexfiles/local/*[^prop];
-#i=swish-e/indexfiles/local/index.swish-e
-#    do
-    #ii=`echo $i | sed "s;swish-e/indexfiles/local/;;1"`
-    #echo "Indexfile: "$ii
-    #ausgabe=`swish-e  -f swish-e/indexfiles/$ii -x '\<br\>%c -\> \<a href="%p"\>%t\</a\>\<br\>\n\<blockquote\>Groesse: %l  Ranking: %r\</blockquote\>' -w "'"$query"'" | sed 's;/www;;1' | sed 's;#;"<br>#;1'`
-    #ausgabe=`swish-e  -f swish-e/indexfiles/merge/index.swish-e -x '\<br\>%c. Rang: \<em\>%r\</em\> -\> \<a href="%p"\>%t\</a\>   Groesse: %l \<br\>\n' -w "'"$query"'" | sed 's;/./;/;g' | sed 's;/www;;1' | sed 's;#;"<br># ;1'`
-    #echo $ausgabe
-#    done
-echo `swish-e  -f swish-e/indexfiles/merge/index.swish-e -x '\<br\>%c. Rang: \<em\>%r\</em\> -\> \<a href="http://%p"\>%t\</a\>   Groesse: %l \<br\>\n' -w "'"$query"'" | sed 's;/./;/;g'  | sed 's;#;"<br># ;1'`
+	done
+IFS=$' '
+
+
+
+
 echo '
-</pre></p>
 <hr>
 <!-- /#footer -->
 Powered by OpenWRT + swish-e + (:
-</body></html>'
+</body></html>
+'
