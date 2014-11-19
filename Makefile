@@ -30,12 +30,13 @@ include $(INCLUDE_DIR)/package.mk
 
 
 define Package/swish-e
-  SECTION:=utils
-  CATEGORY:=Utilities
-  DEPENDS:=+zlib +libxml2  +xpdf +catdoc  +luci-app-freifunk-widgets +iwinfo +vdftpd-tls +luci-app-samba +luci-theme-openwrt +e2fsprogs +dosfsck +block-mount +busybox +opkg +base-files +uci +wireless-tools +fstools +mtd +dnsmasq +iw +ip +kmod-usb-storage +kmod-usb2 
-  # +olsrd-mod-nameservice +olsrd-mod-jsoninfo +CONFIG_BUSYBOX_CONFIG_DC
-  TITLE:=Simple Web Indexing System for Humans - Enhanced
-  URL:=http://swish-e.org
+	SECTION:=utils
+	CATEGORY:=Utilities
+	DEPENDS:=+zlib +libxml2 +xpdf +catdoc
+	# zu freifunk4swish #   +luci-app-freifunk-widgets +iwinfo +vdftpd-tls +luci-app-samba +luci-theme-openwrt +e2fsprogs +dosfsck +block-mount +busybox +opkg +base-files +uci +wireless-tools +fstools +mtd +dnsmasq +iw +ip +kmod-usb-storage +kmod-usb2 
+	# +olsrd-mod-nameservice +olsrd-mod-jsoninfo +CONFIG_BUSYBOX_CONFIG_DC
+	TITLE:=Simple Web Indexing System for Humans - Enhanced
+	URL:=http://swish-e.org
 endef
 
 define Package/swish-e/description
@@ -46,10 +47,20 @@ define Package/swish-e/description
 endef
 
 
+define Package/swish-e4Freifunk
+	SECTION:=utils
+	CATEGORY:=Utilities
+	DEPENDS:=+swish-e +luci-app-freifunk-widgets +iwinfo +vdftpd-tls +luci-app-samba +luci-theme-openwrt +e2fsprogs +dosfsck +block-mount +busybox +opkg +base-files +uci +wireless-tools +fstools +mtd +dnsmasq +iw +ip +kmod-usb-storage +kmod-usb2 
+	TITLE:=special configuration for Freifunk
+endef
+
+
+
 define Build/Compile
 	$(call Build/Compile/Default)
 	$(MAKE) -C $(PKG_BUILD_DIR) DESTDIR="$(PKG_INSTALL_DIR)" install
 endef
+
 
 define Package/swish-e/install	
 	$(INSTALL_DIR) $(1)/usr/bin/
@@ -63,15 +74,6 @@ define Package/swish-e/install
 	$(INSTALL_DIR) $(1)/etc
 	$(INSTALL_DIR) $(1)/etc/swish-e
 	$(INSTALL_DIR) $(1)/etc/uci-defaults
-	$(INSTALL_DIR) $(1)/www
-	$(INSTALL_DIR) $(1)/www/data
-	$(INSTALL_DIR) $(1)/www/swish-e
-	$(INSTALL_DIR) $(1)/www/swish-e/doc
-	$(INSTALL_DIR) $(1)/www/data/indexfiles
-	$(INSTALL_DIR) $(1)/www/data/indexfiles/local
-	$(INSTALL_DIR) $(1)/www/data/indexfiles/global
-	$(INSTALL_DIR) $(1)/www/data/indexfiles/merge
-	$(INSTALL_DIR) $(1)/www/cgi-bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/* $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/lib/*.a $(1)/usr/lib/
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/lib/*.la $(1)/usr/lib/
@@ -81,15 +83,42 @@ define Package/swish-e/install
 	$(CP) /usr/lib/swish-e/* $(1)/usr/lib/swish-e/
 	$(INSTALL_DATA)   $(PKG_INSTALL_DIR)/usr/include/* $(1)/usr/include/
 	$(INSTALL_DATA)   $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/* $(1)/usr/lib/pkgconfig/
+	#$(INSTALL_DATA)   ./files/etc/uci-defaults/*         $(1)/etc/uci-defaults/
+	$(INSTALL_DATA)   ./files/etc/swish-e/* $(1)/etc/swish-e/
+endef
+
+define Package/swish-e4Freifunk/install
+	$(INSTALL_DIR) $(1)/etc
+	$(INSTALL_DIR) $(1)/etc/swish-e
+	$(INSTALL_DIR) $(1)/etc/uci-defaults
+	$(INSTALL_DIR) $(1)/www
+	$(INSTALL_DIR) $(1)/www/data
+	$(INSTALL_DIR) $(1)/www/swish-e
+	$(INSTALL_DIR) $(1)/www/swish-e/doc
+	$(INSTALL_DIR) $(1)/www/data/indexfiles
+	$(INSTALL_DIR) $(1)/www/data/indexfiles/local
+	$(INSTALL_DIR) $(1)/www/data/indexfiles/global
+	$(INSTALL_DIR) $(1)/www/data/indexfiles/merge
+	$(INSTALL_DIR) $(1)/www/cgi-bin
+	#$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/* $(1)/usr/bin/
+	#$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/lib/*.a $(1)/usr/lib/
+	#$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/lib/*.la $(1)/usr/lib/
+	#$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/lib/libswish-e.so.2.0.0 $(1)/usr/lib/
+	#$(LN) /usr/lib/libswish-e.so.2.0.0 $(1)/usr/lib/libswish-e.so.2
+	#$(LN) /usr/lib/libswish-e.so.2.0.0 $(1)/usr/lib/libswish-e.so
+	#$(CP) /usr/lib/swish-e/* $(1)/usr/lib/swish-e/
+	#$(INSTALL_DATA)   $(PKG_INSTALL_DIR)/usr/include/* $(1)/usr/include/
+	#$(INSTALL_DATA)   $(PKG_INSTALL_DIR)/usr/lib/pkgconfig/* $(1)/usr/lib/pkgconfig/
 	$(INSTALL_DATA)   ./files/etc/uci-defaults/*         $(1)/etc/uci-defaults/
 	$(INSTALL_DATA)   ./files/etc/swish-e/* $(1)/etc/swish-e/
 	$(INSTALL_DATA)   ./files/www/swish.css $(1)/www/
 	$(INSTALL_DATA)   ./files/www/swish-e/index.html $(1)/www/swish-e/
 	$(INSTALL_DATA)   ./files/www/swish-e/doc/* $(1)/www/swish-e/doc/
-	#$(INSTALL_DATA)   ./files/www/data/indexfiles/local/* $(1)/www/data/indexfiles/local/
+	##$(INSTALL_DATA)   ./files/www/data/indexfiles/local/* $(1)/www/data/indexfiles/local/
 	$(INSTALL_BIN)    ./files/www/cgi-bin/* $(1)/www/cgi-bin/
-	#$(INSTALL_BIN)    ./files/usr/bin/* $(1)/usr/bin/
-
+	##$(INSTALL_BIN)    ./files/usr/bin/* $(1)/usr/bin/
 endef
 
 $(eval $(call BuildPackage,swish-e))
+$(eval $(call BuildPackage,swish-e4Freifunk))
+
