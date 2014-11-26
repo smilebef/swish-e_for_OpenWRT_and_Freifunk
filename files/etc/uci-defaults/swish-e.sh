@@ -17,7 +17,7 @@ echo '
 <hr />
 
 Das Firmware Image f&uuml;r Raspberry Pi gibt es 
-<a href="http://104.130.3.112/data/OpenWRT/CC/brcm2708/openwrt-brcm2708-sdcard-vfat-ext4.img"> hier </a>. <br/>
+<a href="http://10.230.4.2/data/OpenWRT/CC/brcm2708/openwrt-brcm2708-sdcard-vfat-ext4.img"> hier </a>. <br/>
 Unter Linux wird das Image geschrieben mit: <br/>
 dd if=openwrt-brcm2708-sdcard-vfat-ext4.img of=/dev/mmcblk0 bs=10M <br/>
 <hr /><br/>
@@ -29,11 +29,11 @@ Dieser Web/Fileserver wurde speziell f&uuml;r die Verwendung im Umfeld von Freif
 Im Freifunk-Netz publiziert er mittels OLSRD seinen Service (swish-e) und syncronisiert seine Indexfiles mit umliegenden Servern, wenn auf diesen die gleiche Firmware installiert ist.<br/>
 Im Inselbetrieb erm&ouml;glicht er die Volltextsuche in den eigenen Dateien.
 <br/>
-<b>Achtung!</b> Dieser Server wurde mit der IP-Adresse <b>104.130.3.112</b> vorkonfiguriert, nicht wie sonst 192.168....<br />
+<b>Achtung!</b> Dieser Server wurde mit der IP-Adresse <b>10.230.4.2</b> vorkonfiguriert, nicht wie sonst 192.168....<br />
 Dieses Vorgehen ist dank SD-Card (siehe Raspberry Pi) im Fehlerfall unproblematisch.<br/>
 <b>Achtung!</b> Wenn Sie die Partition eines USB-Laufwerks unter /www/data einh&auml;ngen wird diese im Netz sofort ver&ouml;ffentlicht!<br/>
 Dem OLSRD wurde von Anfang an das Interface UNICAST zugewiesen.
-Dieses hat die f&uuml;r FF-Berlin typische 104/8er IP-Adresse.<br/>
+Dieses hat die f&uuml;r FF-Berlin typische 10.230/16er IP-Adresse.<br/>
 Die nicht nur so bezeichneten Unicast-IP-Adresse verh&auml;lt sich nach erster Inbetriebnahme wie eine Anycast-Adresse also (Link-Local).<br/>
 Diese wurde vom Autor bereitgestellt und ermöglicht den sofortigen Einsatz im berliner Freifunk-Netz.<br/>
 Die Unicast-Adresse muss im Zuge der weiteren Installation individuell umkonfiguriert werden.<br/>
@@ -54,21 +54,21 @@ Das Tool "ifconfig" ist nicht in der Lage mehrerer IP-Adressen auf einem Interfa
 Zu diesem Zweck bitte "ip" oder Luci verwenden.<br />
 Es müssen mindestens zwei IP-Adressen auf dem (Lan-)Interface eth0 vergeben werden.
 <ul>
-<li> <b>Unicast</b> 104.130.3.112/8 muß  individuell angepasst werden, siehe <b>http://ip.berlin.freifunk.net/ip</b> .</li>
-<li> <b>Anycast</b> bleibt unverändert <b>104.21.0.7/32</b>.</li>
+<li> <b>Unicast</b> 10.230.4.2/16 muß  individuell angepasst werden, siehe <b>http://ip.berlin.freifunk.net/ip</b> .</li>
+<li> <b>Anycast</b> bleibt unverändert <b>10.230.4.1/32</b>.</li>
 </ul>
 Der Server wurde f&uuml;r den Berliner Raum entwickelt und benutzt IP-Adressen aus diesem IP-Bereich.
 Diese Adressen müssen f&uuml;r Netze außerhalb von Berlin angepasst werden.
 
 Beim Einrichten der IP-Adressen ist auf die Netzmaske zu achten.
-Die Unicast-Adresse bekommt die Netztypische (in Berlin eine) 8er/255.0.0.0 Netzmaske.
+Die Unicast-Adresse bekommt die Netztypische (in Berlin eine) 8er/255.255.0.0 Netzmaske.
 Die Anicast-Adresse erh&auml;lt jedoch immer eine 32er/255.255.255.255 Netzmaske.<br />
 
 
 <h3>Konfiguration der OLSR-Services</h3>
 Unter Dienste/OLSR/Plugins/olsrd_nameservice.so muss nun ein Dienst annonciert werden.<br />
 <ul>
-<li>Option "service" erhält den Eintrag:<b>"http://104.21.0.7:80/cgi-bin/swish-e.cgi|tcp|Web/File-Server mit Volltext-Suche (swish-e)" </b>. </li>
+<li>Option "service" erhält den Eintrag:<b>"http://10.230.4.1:80/cgi-bin/swish-e.cgi|tcp|Web/File-Server mit Volltext-Suche (swish-e)" </b>. </li>
 </ul>
 Dies hat hoffentlich das Installations-Skript schon f&uuml;r Sie erledigt.
 <h3>Konfiguration von OLSRD</h3>
@@ -160,14 +160,14 @@ uci delete network.unicast.type 2>> $errlogfile
 uci set network.anycast=interface  2>> $errlogfile
 uci set network.anycast.ifname=$ifname 2>> $errlogfile
 uci set network.anycast.proto=static 2>> $errlogfile
-uci set network.anycast.ipaddr=104.21.0.7 2>> $errlogfile
+uci set network.anycast.ipaddr=10.230.4.1 2>> $errlogfile
 uci set network.anycast.netmask=255.255.255.255 2>> $errlogfile
 
 uci set network.unicast=interface 2>> $errlogfile
 uci set network.unicast.ifname=$ifname 2>> $errlogfile
 uci set network.unicast.proto=static 2>> $errlogfile
-uci set network.unicast.ipaddr=104.130.3.112 2>> $errlogfile
-uci set network.unicast.netmask=255.0.0.0 2>> $errlogfile
+uci set network.unicast.ipaddr=10.230.4.2 2>> $errlogfile
+uci set network.unicast.netmask=255.255.0.0 2>> $errlogfile
 
 uci commit network 2>> $errlogfile
 
@@ -182,9 +182,10 @@ ziffer=`uci show olsrd | grep olsrd_nameservice |  sed  's/..library=olsrd_names
 echo "olsrd configuration ziffer=$ziffer :" >> $errlogfile
 
 uci set      olsrd.@LoadPlugin[$ziffer].services_file="/var/run/services_olsr" 2>> $errlogfile
-uci add_list olsrd.@LoadPlugin[$ziffer].service="http://104.21.0.7:80/cgi-bin/swish-e.cgi|tcp|Swish-e" 2>> $errlogfile
+uci add_list olsrd.@LoadPlugin[$ziffer].service="http://10.230.4.1:80/cgi-bin/swish-e.cgi|tcp|Swish-e" 2>> $errlogfile
 uci set      olsrd.@LoadPlugin[$ziffer].ignore=0 2>> $errlogfile
 uci set      olsrd.@Interface[-1].interface="unicast" 2>> $errlogfile
+uci set      olsrd.@Interface[-1].Ipv4Broadcast="255.255.255.255" 2>> $errlogfile
 uci set      olsrd.@Interface[-1].ignore=0 2>> $errlogfile
 uci commit olsrd 2>> $errlogfile
 
@@ -223,7 +224,7 @@ cp /etc/config/olsrd /var/log/olsrd-swish-debug1 2>> $errlogfile
 
 echo "olsrd configuration Hna4:"  >> $errlogfile
 uci add olsrd Hna4
-uci set olsrd.@Hna4[-1].netaddr=104.21.0.7 2>> $errlogfile
+uci set olsrd.@Hna4[-1].netaddr=10.230.4.1 2>> $errlogfile
 uci set olsrd.@Hna4[-1].netmask=255.255.255.255 2>> $errlogfile
 uci commit olsrd 2>> $errlogfile
 
