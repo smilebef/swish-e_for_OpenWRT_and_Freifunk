@@ -50,7 +50,7 @@ endef
 define Package/swish-e4Freifunk
 	SECTION:=utils
 	CATEGORY:=Utilities
-	DEPENDS:=+swish-e +luci-app-freifunk-widgets +iwinfo +vdftpd-tls +luci-app-samba +luci-theme-openwrt +e2fsprogs +dosfsck +block-mount +busybox +opkg +base-files +uci +wireless-tools +fstools +mtd +dnsmasq +iw +ip +kmod-usb-storage +kmod-usb2 
+	DEPENDS:=+swish-e +luci-app-freifunk-widgets +iwinfo +vdftpd-tls +luci-app-samba +luci-theme-openwrt +e2fsprogs +dosfsck +block-mount +busybox +opkg +base-files +uci +wireless-tools +fstools +mtd +dnsmasq +iw +ip +kmod-usb-storage +kmod-usb2 +luci-app-olsr-services +luci-mod-admin-full +luci-ssl +luci-mod-freifunk +luci-lib-json +luci-app-freifunk-widgets
 	TITLE:=special configuration for Freifunk
 endef
 

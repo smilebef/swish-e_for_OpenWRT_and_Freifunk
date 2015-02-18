@@ -12,46 +12,43 @@ echo '
 <a href="/cgi-bin/swish-e.cgi"><h1>SWISH-e Suche  </h1></a>
 <br />
 <br />
-<a href="/data/"><h1>Auf dem Datentr&auml;ger st&ouml;bern</h1></a>
+<a href="/data/"><h1>Datenträger per Http durchsuchen.</h1></a>
 <br />
 <hr />
-
-Das Firmware Image f&uuml;r Raspberry Pi gibt es 
-<a href="http://10.230.4.2/data/OpenWRT/CC/brcm2708/openwrt-brcm2708-sdcard-vfat-ext4.img"> hier </a>. <br/>
-Unter Linux wird das Image geschrieben mit: <br/>
+<h3>Download von Image und Quellen:</h3>
+<a href="http://10.230.4.2/data/OpenWRT/CC/brcm2708/openwrt-brcm2708-sdcard-vfat-ext4.img">Firmware-Image</a>. <br/>
+<a href="github.org/smilebef/">Quellen (github)</a>.
+<h3>Auf einen Datenträger brennen mit:</h3>
 dd if=openwrt-brcm2708-sdcard-vfat-ext4.img of=/dev/mmcblk0 bs=10M <br/>
 <hr /><br/>
-<h1>&Uuml;ber diesen Server...</h1>
+<h1>&Uuml;ber die Firmware...</h1>
 <br/>
-<h3>Erl&auml;uterungen zum Konzept dieses Fileservers</h3>
-
-Dieser Web/Fileserver wurde speziell f&uuml;r die Verwendung im Umfeld von Freifunk entwickelt.<br />
-Im Freifunk-Netz publiziert er mittels OLSRD seinen Service (swish-e) und syncronisiert seine Indexfiles mit umliegenden Servern, wenn auf diesen die gleiche Firmware installiert ist.<br/>
-Im Inselbetrieb erm&ouml;glicht er die Volltextsuche in den eigenen Dateien.
+<h2>Konzept des Servers</h2>
+<h3>In Freifunk-Umgebung.</h3>
+Dieser Web/Fileserver wurde speziell f&uuml;r die Verwendung im Umfeld von Freifunk entwickelt.
+Im Freifunk-Netz wird mittels des Nameservice-Plugins des OLSRD der Service "Swish-e" publiziert.
+Mit Hilfe von Cron-Deamon werden alle Indexfiles aller erreichbaren Server gleicher Bauart syncronisiert.<br/>
+<h3>Ohne Freifunk-Umgebung.</h3>
+Im Inselbetrieb wird die Volltextsuche in den eigenen Dateien erm&ouml;glicht.
 <br/>
-<b>Achtung!</b> Dieser Server wurde mit der IP-Adresse <b>10.230.4.2</b> vorkonfiguriert, nicht wie sonst 192.168....<br />
+<h2>Allgemeines zur Arbeit im Freifunk-Netz</h2>
+Dieser Server wurde speziell für die berliner Freifunk-Umgebung mit der Unicast-IP-Adresse <b>10.230.4.2</b> vorkonfiguriert, nicht wie sonst &uuml;blich mit 192.168....<br />
 Dieses Vorgehen ist dank SD-Card (siehe Raspberry Pi) im Fehlerfall unproblematisch.<br/>
-<b>Achtung!</b> Wenn Sie die Partition eines USB-Laufwerks unter /www/data einh&auml;ngen wird diese im Netz sofort ver&ouml;ffentlicht!<br/>
+<b>Achtung!</b> Ein USB-Laufwerk wird vornehmlich unter /www/data eingeh&auml;ngt und damit im Netz sofort ver&ouml;ffentlicht!<br/>
 Dem OLSRD wurde von Anfang an das Interface UNICAST zugewiesen.
-Dieses hat die f&uuml;r FF-Berlin typische 10.230/16er IP-Adresse.<br/>
-Die nicht nur so bezeichneten Unicast-IP-Adresse verh&auml;lt sich nach erster Inbetriebnahme wie eine Anycast-Adresse also (Link-Local).<br/>
-Diese wurde vom Autor bereitgestellt und ermöglicht den sofortigen Einsatz im berliner Freifunk-Netz.<br/>
-Die Unicast-Adresse muss im Zuge der weiteren Installation individuell umkonfiguriert werden.<br/>
+Die nicht nur so bezeichneten Unicast-IP-Adresse verh&auml;lt sich nach erster Inbetriebnahme wie eine Anycast-Adresse.<br/>
+Diese wurde vom Autor bereitgestellt und ermöglicht den sofortigen Erreichbarkeit im berliner Freifunk-Netz.<br/>
+Die Unicast-Adresse muss im Zuge der Installation individuell umkonfiguriert werden.<br/>
 Die ebenfalls nicht nur so genannte Anycast-Adresse sollte beibehalten werden.
+Grund daf&uuml;r ist die Anycast-Adress gestützte dezentrale Suche im Freifunk-Netz,
+wonach derjenige Rechner welcher die kürzeste Route zum Such-Clienten hat die Suchanfrage bedient.
+Die syncronisierten Indexfiles beinhalten dann die jeweiligen Unicast-Adressen.
 <br />
 
-<h3>Die hier angewandte Technik der dezentralen Suche.</h3>
-Es wird eine Methode verwendet auf Grundlage von UNICAST und ANYCAST Adressen in Verbindung mit dem OLSRD.<br />
-Bei der Eingabe einer Anicast-Adresse im URL-Feld des Browsers wird der Browser über die Routing-Mechanismen zum nächstgelegenen Server mit dieser Adresse verbunden. Eben gerade bei einer mehrfach vergebenen Adresse. <br />
-Der OLSRD mit seinem OLSRD-nameservice-plugin (services/service-file) publizieren den Dienst "swish-e". 
-Dies wird zur Syncroniation und zur weiteren Verarbeitung durch Skripte benötigt.
-<br /> Es wird also mit Hilfe der Anycast-Adresse eine Suchanfrage abgesendet.<br />
-Die Pfade des Such-Ergebnisses beinhalten dann jedoch die Unicast-Adresse.<br />
-
-<h2>Konfiguration des Servers</h2>
+<h2>Spezielles zur Konfiguration des Servers</h2>
 <h3>Konfiguration der Adressen ANYCAST/UNICAST</h3>
 Das Tool "ifconfig" ist nicht in der Lage mehrerer IP-Adressen auf einem Interface hinzuzufügen bzw. anzuzeigen.<br />
-Zu diesem Zweck bitte "ip" oder Luci verwenden.<br />
+Zu diesem Zweck muss "ip" bzw. Luci verwendet werden.<br />
 Es müssen mindestens zwei IP-Adressen auf dem (Lan-)Interface eth0 vergeben werden.
 <ul>
 <li> <b>Unicast</b> 10.230.4.2/16 muß  individuell angepasst werden, siehe <b>http://ip.berlin.freifunk.net/ip</b> .</li>
@@ -85,7 +82,7 @@ Die umbenannte Luci-Seite k&ouml;nnte dann mittels eines Links (siehe google: se
 <br /><br />
 <hr />
 <br />
-<h1>Einrichten von Datentr&auml;gern. Under Construction!</h1>
+<h1>Einrichten von Datentr&auml;gern. !Under Construction!</h1>
 <br />
 <hr />
 <br />
@@ -93,7 +90,7 @@ Nun stellt sich die Frage, wie man am besten einen Datentr&auml;ger einrichtet. 
 Es gibt zur Auswahl:
 <ul>
 <li> (S)FTP </li>
-<li> HTTP(S) </li>
+<li> HTTP(S) - bereits integriert</li>
 <li> Samba </li>
 </ul>
 Bei der genutzten Software handelt es sich prim&auml;r um besonders kleine und leichte Programme. Die Leistungsfähigkeit ist demnach stak begrentzt.
@@ -185,7 +182,7 @@ uci set      olsrd.@LoadPlugin[$ziffer].services_file="/var/run/services_olsr" 2
 uci add_list olsrd.@LoadPlugin[$ziffer].service="http://10.230.4.1:80/cgi-bin/swish-e.cgi|tcp|Swish-e" 2>> $errlogfile
 uci set      olsrd.@LoadPlugin[$ziffer].ignore=0 2>> $errlogfile
 uci set      olsrd.@Interface[-1].interface="unicast" 2>> $errlogfile
-uci set      olsrd.@Interface[-1].Ipv4Broadcast="255.255.255.255" 2>> $errlogfile
+uci set      olsrd.@Interface[-1].Ip4Broadcast="255.255.255.255" 2>> $errlogfile
 uci set      olsrd.@Interface[-1].ignore=0 2>> $errlogfile
 uci commit olsrd 2>> $errlogfile
 
