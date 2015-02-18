@@ -16,8 +16,8 @@ echo '
 <br />
 <hr />
 <h3>Download von Image und Quellen:</h3>
-<a href="http://10.230.4.2/data/OpenWRT/CC/brcm2708/openwrt-brcm2708-sdcard-vfat-ext4.img">Firmware-Image</a>. <br/>
-<a href="github.org/smilebef/">Quellen (github)</a>.
+<a href="http://10.230.4.1/data/OpenWRT/CC/brcm2708/openwrt-brcm2708-sdcard-vfat-ext4.img">Firmware-Image</a>. <br/>
+<a href="http://github.org/smilebef/">Quellen (github)</a>.
 <h3>Auf einen Datenträger brennen mit:</h3>
 dd if=openwrt-brcm2708-sdcard-vfat-ext4.img of=/dev/mmcblk0 bs=10M <br/>
 <hr /><br/>
